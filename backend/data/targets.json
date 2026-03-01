@@ -1,9 +1,9 @@
 {
-  "Technology": 30,
-  "Healthcare": 15,
-  "Financials": 10,
-  "Energy": 5,
-  "Broad Market": 25,
-  "International": 10,
-  "Other": 5
+  "Technology": 24.0,
+  "Healthcare": 15.0,
+  "Financials": 10.0,
+  "Energy": 11.0,
+  "Broad Market": 25.0,
+  "International": 10.0,
+  "Other": 5.0
 }

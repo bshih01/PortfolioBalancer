@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { getSuggestions } from "../services/api";
+import type { Suggestion } from "../services/api";
 
-export default function SuggestionsPanel({ account }) {
+interface Props {
+  account: string;
+}
+
+export default function SuggestionsPanel({ account }: Props) {
   const [budget, setBudget] = useState("");
-  const [suggestions, setSuggestions] = useState(null);
+  const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(budget);
     if (!amount || amount <= 0) return;
@@ -16,7 +21,7 @@ export default function SuggestionsPanel({ account }) {
     try {
       const data = await getSuggestions(amount, account);
       setSuggestions(data);
-    } catch (err) {
+    } catch {
       setError("Failed to get suggestions. Is the backend running?");
     } finally {
       setLoading(false);

@@ -1,11 +1,16 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import type { SectorInfo } from "../services/api";
 
 const COLORS = [
   "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6",
   "#ec4899", "#06b6d4", "#84cc16", "#f97316", "#6366f1",
 ];
 
-export default function AllocationChart({ sectors }) {
+interface Props {
+  sectors: Record<string, SectorInfo>;
+}
+
+export default function AllocationChart({ sectors }: Props) {
   const data = Object.entries(sectors).map(([name, info]) => ({
     name,
     value: info.percent,
@@ -33,6 +38,8 @@ export default function AllocationChart({ sectors }) {
           <Tooltip
             formatter={(val) => `${val}%`}
             contentStyle={{ background: "#1e293b", border: "none", borderRadius: 8 }}
+            itemStyle={{ color: "#e2e8f0" }}
+            labelStyle={{ color: "#e2e8f0" }}
           />
           <Legend />
         </PieChart>

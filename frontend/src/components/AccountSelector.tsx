@@ -1,4 +1,12 @@
-export default function AccountSelector({ accounts, selected, onChange }) {
+import type { Account } from "../services/api";
+
+interface Props {
+  accounts: Account[];
+  selected: string;
+  onChange: (value: string) => void;
+}
+
+export default function AccountSelector({ accounts, selected, onChange }: Props) {
   return (
     <select
       value={selected}

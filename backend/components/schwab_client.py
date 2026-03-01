@@ -1,6 +1,7 @@
 import os
 import schwab
 from dotenv import load_dotenv
+from models import Account, Position
 
 load_dotenv()
 
@@ -21,13 +22,13 @@ def authenticate():
     )
 
 
-def get_accounts(client):
+def get_accounts(client) -> list[Account]:
     resp = client.get_account_numbers()
     resp.raise_for_status()
-    return resp.json()
+    return [Account(**a) for a in resp.json()]
 
 
-def get_positions(client, account_hash):
+def get_positions(client, account_hash: str) -> list[Position]:
     resp = client.get_account(
         account_hash, fields=client.Account.Fields.POSITIONS
     )
@@ -37,22 +38,20 @@ def get_positions(client, account_hash):
     positions = []
     for pos in data.get("securitiesAccount", {}).get("positions", []):
         instrument = pos.get("instrument", {})
-        positions.append({
-            "ticker": instrument.get("symbol"),
-            "name": instrument.get("description", ""),
-            "asset_type": instrument.get("assetType", ""),
-            "quantity": pos.get("longQuantity", 0),
-            "market_value": pos.get("marketValue", 0),
-            "average_price": pos.get("averagePrice", 0),
-        })
+        positions.append(Position(
+            ticker=instrument.get("symbol", ""),
+            name=instrument.get("description", ""),
+            asset_type=instrument.get("assetType", ""),
+            quantity=pos.get("longQuantity", 0),
+            market_value=pos.get("marketValue", 0),
+            average_price=pos.get("averagePrice", 0),
+        ))
     return positions
 
 
-def get_all_positions(client):
+def get_all_positions(client) -> dict[str, list[Position]]:
     accounts = get_accounts(client)
     result = {}
     for acct in accounts:
-        account_number = acct["accountNumber"]
-        account_hash = acct["hashValue"]
-        result[account_number] = get_positions(client, account_hash)
+        result[acct.accountNumber] = get_positions(client, acct.hashValue)
     return result

@@ -1,8 +1,9 @@
 import json
 import os
 import yfinance as yf
+from models import Position
 
-ETF_SECTORS_PATH = os.path.join(os.path.dirname(__file__), "data", "etf_sectors.json")
+ETF_SECTORS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "etf_sectors.json")
 
 _sector_cache = {}
 _etf_sectors = None
@@ -35,8 +36,8 @@ def get_sector(ticker: str) -> str:
     return sector
 
 
-def classify_positions(positions: list[dict]) -> list[dict]:
+def classify_positions(positions: list[Position]) -> list[Position]:
     for pos in positions:
-        if not pos.get("sector"):
-            pos["sector"] = get_sector(pos["ticker"])
+        if not pos.sector:
+            pos.sector = get_sector(pos.ticker)
     return positions

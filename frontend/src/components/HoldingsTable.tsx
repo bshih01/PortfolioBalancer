@@ -1,4 +1,10 @@
-export default function HoldingsTable({ positions }) {
+import type { Position } from "../services/api";
+
+interface Props {
+  positions: Position[];
+}
+
+export default function HoldingsTable({ positions }: Props) {
   if (!positions.length) return null;
 
   return (

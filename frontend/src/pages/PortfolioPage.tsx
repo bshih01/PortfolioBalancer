@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
-import { getAccounts, getAllocation, getTargets } from "./services/api";
-import AccountSelector from "./components/AccountSelector";
-import AllocationChart from "./components/AllocationChart";
-import TargetComparison from "./components/TargetComparison";
-import SuggestionsPanel from "./components/SuggestionsPanel";
-import HoldingsTable from "./components/HoldingsTable";
+import { Link } from "react-router-dom";
+import { getAccounts, getAllocation, getTargets } from "../services/api";
+import type { Account, Allocation, Targets } from "../services/api";
+import AccountSelector from "../components/AccountSelector";
+import AllocationChart from "../components/AllocationChart";
+import TargetComparison from "../components/TargetComparison";
+import SuggestionsPanel from "../components/SuggestionsPanel";
+import HoldingsTable from "../components/HoldingsTable";
+import TargetEditor from "../components/TargetEditor";
 
-export default function App() {
-  const [accounts, setAccounts] = useState([]);
+export default function PortfolioPage() {
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [selected, setSelected] = useState("all");
-  const [allocation, setAllocation] = useState(null);
-  const [targets, setTargets] = useState({});
-  const [error, setError] = useState(null);
+  const [allocation, setAllocation] = useState<Allocation | null>(null);
+  const [targets, setTargets] = useState<Targets>({});
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +27,7 @@ export default function App() {
     setError(null);
     getAllocation(selected)
       .then(setAllocation)
-      .catch((err) => setError(err.message))
+      .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false));
   }, [selected]);
 
@@ -43,7 +46,10 @@ export default function App() {
   return (
     <div className="min-h-screen p-6 max-w-6xl mx-auto">
       <header className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold">PortfolioBalancer</h1>
+        <div className="flex items-center gap-4">
+          <Link to="/" className="text-slate-400 hover:text-slate-200 text-sm">&larr; Home</Link>
+          <h1 className="text-2xl font-bold">Portfolio Balancer</h1>
+        </div>
         <AccountSelector accounts={accounts} selected={selected} onChange={setSelected} />
       </header>
 
@@ -60,6 +66,7 @@ export default function App() {
             <TargetComparison sectors={allocation.sectors} targets={targets} />
           </div>
 
+          <TargetEditor targets={targets} onSave={setTargets} />
           <SuggestionsPanel account={selected} />
           <HoldingsTable positions={allocation.positions} />
         </div>
